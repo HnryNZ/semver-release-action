@@ -30,14 +30,47 @@ This is what you need:
 - Docker Credentials: `${{ secrets.DOCKER_USER }}` & `${{ secrets.DOCKER_ACCESS_TOKEN }}`
 - The trunk branch name needs to be consistent with script call `/entrypoint.sh "master" ...`
 
-## How to roll in your changes to main
+## How to roll in your changes to main 
+
+What you need:
+
+- Need to be signed in to AWS
+
+Steps (How to push a latest image to resgistry):
+
+1. Retrieve an authentication token and authenticate your Docker client to your registry. Use the AWS CLI:
+
+```bash
+aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 660787600775.dkr.ecr.ap-southeast-2.amazonaws.com
+```
+
+2. Build your Docker image using the following command. For information on building a Docker file from scratch see the instructions here . You can skip this step if your image is already built:
+
+```bash
+docker build -t production-semver-release-action .
+```
+
+3. After the build completes, tag your image so you can push the image to this repository:
+
+```bash
+docker tag production-semver-release-action:latest 660787600775.dkr.ecr.ap-southeast-2.amazonaws.com/production-semver-release-action:latest
+```
+
+4. Run the following command to push this image to your newly created AWS repository:
+
+```bash
+docker push 660787600775.dkr.ecr.ap-southeast-2.amazonaws.com/production-semver-release-action:latest
+```
+
+
+<!-- ## How to roll in your changes to main (Legacy Dockerhub)
 
 What you need:
 
 1. Merge your changes to `main`
 2. Build the image `docker build -t hnrynz/semver-release-action:latest .`
 3. Push the image `docker push hnrynz/semver-release-action:latest`
-4. Since this is a `:latest` tag, this should be **automatically** rolled in to any workflow pulling this image 👌
+4. Since this is a `:latest` tag, this should be **automatically** rolled in to any workflow pulling this image 👌 -->
 
 
 <!-- # Semver Release Github Action ![](https://github.com/K-Phoen/semver-release-action/workflows/CI/badge.svg)
