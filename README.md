@@ -4,26 +4,8 @@
 
 Since this is being used via a private registry. This action is being executed manually so that docker authentication can occur prior to image pull. This is how you manually implement this (see [example implementation](https://github.com/HnryNZ/hnry-rails/blob/master/.github/workflows/auto-releaser.yml#L36))
 
-```yaml
-generate_release:
-  name: Generate Release
-  runs-on: ubuntu-latest
-  container:
-    image: hnrynz/semver-release-action:latest
-    credentials:
-      username: ${{ secrets.DOCKER_USER }}
-      password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
-  needs: [suspend_release]
-  if: github.event.pull_request.merged
+- See this [Hnry Rails Pull Request](https://github.com/HnryNZ/hnry-rails/pull/10717/files) to see how we can leverage this internally 👌
 
-  steps:
-    - name: Run Action
-      run: |
-        # manual execution of the action
-        chmod +x /entrypoint.sh
-        export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-        /entrypoint.sh "master" "release" "" "%major%.%minor%.%patch%"
-```
 
 This is what you need:
 
