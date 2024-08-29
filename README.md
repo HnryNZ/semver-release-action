@@ -29,7 +29,12 @@ aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS
 2. Build your Docker image using the following command. For information on building a Docker file from scratch see the instructions here . You can skip this step if your image is already built:
 
 ```bash
+# WARNING: use ONE command to build your image. Depends on chip of the machine!
+
+# IF YOU ARE USING A NON-ARM
 docker build -t production-semver-release-action .
+# IF YOU ARE USING ARM (ie. M-series Mac)
+docker buildx build --platform linux/amd64 -t production-semver-release-action .
 ```
 
 3. After the build completes, tag your image so you can push the image to this repository:
