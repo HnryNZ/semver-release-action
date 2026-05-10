@@ -7,7 +7,7 @@ import (
 
 	"github.com/K-Phoen/semver-release-action/internal/pkg/action"
 	"github.com/blang/semver/v4"
-	"github.com/google/go-github/v45/github"
+	"github.com/google/go-github/v85/github"
 	"github.com/spf13/cobra"
 	"golang.org/x/oauth2"
 )
