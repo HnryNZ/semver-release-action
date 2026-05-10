@@ -33,26 +33,19 @@ func executeLatestTag(cmd *cobra.Command, args []string) {
 	owner := parts[0]
 	repo := parts[1]
 
-	refs, response, err := client.Git.ListMatchingRefs(ctx, owner, repo, &github.ReferenceListOptions{
-		Ref: "tags",
-	})
+	latestRelease, response, err := client.Repositories.GetLatestRelease(ctx, owner, repo)
 	if response != nil && response.StatusCode == http.StatusNotFound {
 		cmd.Print("v0.0.0")
 		return
 	}
 	action.AssertNoError(cmd, err, "could not list git refs: %s", err)
 
-	latest := semver.MustParse("0.0.0")
-	for _, ref := range refs {
-		version, err := semver.ParseTolerant(strings.Replace(*ref.Ref, "refs/tags/", "", 1))
-		if err != nil {
-			continue
-		}
+	latestTag, err := semver.ParseTolerant(*latestRelease.TagName)
 
-		if version.GT(latest) {
-			latest = version
-		}
+	if err != nil {
+		cmd.Print("v0.0.0")
+		return
 	}
 
-	cmd.Printf("v%s", latest)
+	cmd.Printf("v%s", latestTag)
 }
