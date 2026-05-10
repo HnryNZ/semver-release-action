@@ -79,11 +79,9 @@ func execute(cmd *cobra.Command, releaseType string, args []string) {
 }
 
 func createLightweightTag(ctx context.Context, client *github.Client, repo repository, release releaseDetails) error {
-	_, _, err := client.Git.CreateRef(ctx, repo.owner, repo.name, &github.Reference{
-		Ref: github.String(fmt.Sprintf("refs/tags/%s", release.version)),
-		Object: &github.GitObject{
-			SHA: &release.target,
-		},
+	_, _, err := client.Git.CreateRef(ctx, repo.owner, repo.name, github.CreateRef{
+		Ref: fmt.Sprintf("refs/tags/%s", release.version),
+		SHA: release.target,
 	})
 
 	return err
