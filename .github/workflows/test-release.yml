@@ -1,0 +1,22 @@
+# Note that this workflow will not succeed while `/bumper guard` is enabled in the entrypoint, so you can comment it out to test
+# And if this workflow succeeds it will create a real release tag in this repo which you probably want to clean up
+
+name: Test Release
+
+on: pull_request
+
+jobs:
+  build-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t test-semver .
+
+      - name: Run image test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: docker run --rm -e GITHUB_TOKEN=$GITHUB_TOKEN -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY -e GITHUB_SHA=$GITHUB_SHA -e GITHUB_EVENT_PATH=$GITHUB_EVENT_PATH -e GITHUB_OUTPUT=$GITHUB_OUTPUT -v $GITHUB_EVENT_PATH:$GITHUB_EVENT_PATH -v $GITHUB_OUTPUT:$GITHUB_OUTPUT test-semver "master" "release" "" "%major%.%minor%.%patch%"
